@@ -1,0 +1,52 @@
+
+version: "3.8"
+services:
+    apis:
+        # image: thomas-oliver/nestjs-dockerized 
+        build:
+            dockerfile: ./Dockerfile
+            context: ./test-app
+        depends_on: 
+            - postgres
+        environment: 
+            DATABASE_URL: postgres://user:password@postgres:5432/db
+            NODE_ENV: development
+            PORT: 3500
+        ports:
+            - "3500:3500"
+
+    postgres:
+        image: postgres:10.4
+        ports:
+            - "35000:5432"
+        environment: 
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: db
+    frontend:
+        build:
+            context: ./client
+            dockerfile: ./Dockerfile
+        image: "azeem/client"
+        ports: 
+            - "3000:3000"
+    backend:
+        build:
+            context: ./main
+            dockerfile: ./Dockerfile
+        image: "azeem/main"
+        ports: 
+            - "6000:6000" 
+    keycloak:
+        image: quay.io/keycloak/keycloak:latest
+        environment:
+            DB_VENDOR: POSTGRES
+            DB_ADDR: postgres
+            DB_DATABASE: db
+            DB_USER: user
+            DB_SCHEMA: public
+            DB_PASSWORD: password
+            KEYCLOAK_USER: admin
+            KEYCLOAK_PASSWORD: password
+        ports:
+            - "8180:8080"
