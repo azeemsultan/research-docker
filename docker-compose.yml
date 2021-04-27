@@ -49,4 +49,4 @@ services:
             KEYCLOAK_USER: admin
             KEYCLOAK_PASSWORD: password
         ports:
-            - "8180:8080"
+            - "8080:8080"
